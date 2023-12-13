@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/hmp/app/static/css/main.e6c13ad2.css",
+    "main.js": "/hmp/app/static/js/main.c3c4acf6.js",
+    "static/js/787.e0f71a0b.chunk.js": "/hmp/app/static/js/787.e0f71a0b.chunk.js",
+    "static/media/dana-devolk-x2cNcfz_xXU-unsplash.jpg": "/hmp/app/static/media/dana-devolk-x2cNcfz_xXU-unsplash.190333b4a9f4e25becfe.jpg",
+    "static/media/NordWood.avif": "/hmp/app/static/media/NordWood.c416cd770ae813738e12.avif",
+    "index.html": "/hmp/app/index.html",
+    "main.e6c13ad2.css.map": "/hmp/app/static/css/main.e6c13ad2.css.map",
+    "main.c3c4acf6.js.map": "/hmp/app/static/js/main.c3c4acf6.js.map",
+    "787.e0f71a0b.chunk.js.map": "/hmp/app/static/js/787.e0f71a0b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.c3c4acf6.js"
+  ]
+}
