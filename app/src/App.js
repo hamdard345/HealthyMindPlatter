@@ -3,16 +3,13 @@ import { Routes, Route } from "react-router-dom";
 import HomePage from "./components/HomePage";
 import Track from "./components/Track";
 import Signin from "./components/Signin";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Layout from "./components/Layout/Layout";
 import { Signup } from "./components/Signup";
 import AllActivity from "./components/AllActivity";
 import Report from "./components/Report";
 /**
  * App
- *
- * Main page for the app. Consider moving the menu to it
- * own component.
  *
  * @author Noorullah Niamatullah w18002720
  */

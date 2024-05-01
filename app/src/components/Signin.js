@@ -6,6 +6,7 @@ import { Container } from "@mui/system";
 import { Button, Grid, Link, TextField, Typography } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import {pages} from './Data'
+import API_BASE_URL from "../config";
 /**
  *
  * @param {authenticated} props the state which track user authentication
@@ -48,7 +49,7 @@ function Signin(props) {
       "base64"
     );
 
-    fetch("http://unn-w18002720.newnumyspace.co.uk/hmp/api/auth", 
+    fetch(`${API_BASE_URL}auth`, 
     {
       method: "POST",
       headers: new Headers({ Authorization: "Basic " + encodedString }),

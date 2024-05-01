@@ -31,7 +31,7 @@ class request
      */
     private function setPath(){
       $this->path = parse_url($_SERVER['REQUEST_URI'])['path'];
-      $this->path = str_replace("/hmp/api","",$this->path);
+      $this->path = str_replace("/projecthmp/healthymindplatter/api","",$this->path);
 
     }
     public function getPath(){

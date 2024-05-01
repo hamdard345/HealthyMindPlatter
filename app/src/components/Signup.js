@@ -1,5 +1,6 @@
 import { Button, Container, Link, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
+import API_BASE_URL from "../config";
 
 /**
  * @author Noorullah Niamatullah
@@ -54,7 +55,7 @@ export const Signup = () => {
     const formData = new FormData();
     formData.append("userName", email);
     formData.append("password", password);
-    fetch("http://unn-w18002720.newnumyspace.co.uk/hmp/api/adduser/", {
+    fetch(`${API_BASE_URL}adduser`, {
       method: "POST",
       body: formData,
     })

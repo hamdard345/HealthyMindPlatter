@@ -5,6 +5,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import API_BASE_URL from "../config";
 
 /**
  * @author Noorullah Niamatullah w18002720
@@ -26,7 +27,7 @@ export default function DeleteActivity(props) {
     const formData = new FormData();
     formData.append("activityID", props.activityID);
     const token = localStorage.getItem("token");
-    fetch("http://unn-w18002720.newnumyspace.co.uk/hmp/api/deleteactivity/", {
+    fetch(`${API_BASE_URL}deleteactivity`, {
       method: "POST",
       headers: new Headers({ Authorization: "Bearer " + token }),
       body: formData,

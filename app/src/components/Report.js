@@ -1,6 +1,7 @@
 import { Button, Grid, Link, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { WeeklyReport } from "./WeeklyReport";
+import API_BASE_URL from "../config";
 /**
  * * @author Noorullah Niamatullah w18002720
  * @param {authenticated} state tracking if user is logged in or not
@@ -51,7 +52,7 @@ const Report = (props) => {
     formData.append("endingweek", lastDay.toISOString().slice(0, 10));
 
     const token = localStorage.getItem("token");
-    fetch("http://unn-w18002720.newnumyspace.co.uk/hmp/api/weeklyreport/", {
+    fetch(`${API_BASE_URL}weeklyreport`, {
       method: "POST",
       headers: new Headers({ Authorization: "Bearer " + token }),
       body: formData,

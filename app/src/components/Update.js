@@ -7,6 +7,7 @@ import { Button, Grid, MenuItem } from "@mui/material";
 import Select from "@mui/material/Select";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import backgroundImage from "./img/dana-devolk-x2cNcfz_xXU-unsplash.jpg";
+import API_BASE_URL from "../config";
 
 /**
  * update component allows to update deatails of an activity
@@ -75,7 +76,7 @@ const Update = (props) => {
     formData.append("activityID", props.data.activityID);
 
     const token = localStorage.getItem("token");
-    fetch("http://unn-w18002720.newnumyspace.co.uk/hmp/api/updateactivity/", {
+    fetch(`${API_BASE_URL}updateactivity`, {
       method: "POST",
       headers: new Headers({ Authorization: "Bearer " + token }),
       body: formData,

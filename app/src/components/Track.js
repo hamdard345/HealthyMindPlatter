@@ -6,6 +6,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Button, Grid,  MenuItem, Link, Autocomplete } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import backgroundImage from "./img/dana-devolk-x2cNcfz_xXU-unsplash.jpg"
+import API_BASE_URL from "../config";
 
 
 /**
@@ -128,9 +129,9 @@ const Track = (props) => {
     formData.append("time", starting);
     formData.append("duration", duration);
     formData.append("activityNotes", details);
-
+    console.log("formdata",formData)
     const token = localStorage.getItem("token");
-    fetch("http://unn-w18002720.newnumyspace.co.uk/hmp/api/addactivity/", {
+    fetch(`${API_BASE_URL}addactivity`, {
       method: "POST",
       headers: new Headers({ Authorization: "Bearer " + token }),
       body: formData,
