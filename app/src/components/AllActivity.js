@@ -1,188 +1,105 @@
-import { Button, Grid, Link, Typography } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import { MonthlyActivity } from "./MonthlyActivity";
+import MonthlyActivity from "./MonthlyActivity";
 import API_BASE_URL from "../config";
+
 /**
- * @author Noorullah Niamatullah
- * @param {authenticated} props is the state tracks user authentication
- * @param{handleAuthenticated} props function which set the authentication state if the user is logged in
- * @returns calandar component which hold list of  monthly  activities along with other features such as search ,filter,edit and delet
+ * Calendar component to display activities for a selected month with features such as search, filter, edit, and delete.
+ * @param {boolean} authenticated - State tracking user authentication.
+ * @param {function} handleAuthenticated - Function to set the authentication state if the user is logged in.
  */
-const Calander = (props) => {
-  //array for the name of the months
-  const monthName = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  //hook for the serach term
-  const [searchterm, setSearchTerm] = useState("");
-
-  //hook for select
-  const [selectValue, setSelectValue] = useState("");
-  //date object
-  const date = new Date();
-  //react hook for current month and year
-  const [selectedDate, setSelectedDate] = useState({
-    year: date.getFullYear(),
-    month: date.getMonth(),
-  });
-  // hook that hold the list of activities reutrned from the database
-  const [list, setList] = useState([]);
-  //a state that set the list to an empty object for exception handling 
-  const [empty, setEmpty] = useState([
-    {
-      date: "",
-      activityCategory: "",
-      activityName: "",
-      time: "",
-      activityNotes: "",
-    },
-  ]);
-  //to get the month name
-  let monthN = monthName[selectedDate.month];
-
+const AllActivity = ({ authenticated, handleAuthenticated }) => {
+  // Array of month names for display
+  const months = ["January", "February", "March", "April", "May", "June",
+                  "July", "August", "September", "October", "November", "December"];
   
-  /**
-   * this function clear any serach or filters first ,than checks if the shown month is the first month of year it will change the year as well
-   */
-  const changePrevious = () => {
-    setSearchTerm("");
-    setSelectValue("");
-    if (selectedDate.month >= 1) {
-      setSelectedDate({ ...selectedDate, month: selectedDate.month - 1 });
-    } else {
-      setSelectedDate({
-        ...selectedDate,
-        month: (selectedDate.month = 11),
-        year: selectedDate.year - 1,
-      });
-    }
-  };
-  //change the name of the month to the next month
-  const changeNext = () => {
-    setSearchTerm("");
-    setSelectValue("");
-    if (selectedDate.month >= 0 && selectedDate.month <= 10) {
-      setSelectedDate({ ...selectedDate, month: selectedDate.month + 1 });
-    } else {
-      setSelectedDate({
-        ...selectedDate,
-        month: (selectedDate.month = 0),
-        year: selectedDate.year + 1,
-      });
-    }
-  };
+  // State for storing the search term input by the user
+  const [searchTerm, setSearchTerm] = useState("");
+  // State for storing the selected value from a dropdown or similar component
+  const [selectValue, setSelectValue] = useState("");
+  // Creating a date object to get the current date, month, and year
+  const currentDate = new Date();
+  // State for storing the currently selected date
+  const [selectedDate, setSelectedDate] = useState({
+    year: currentDate.getFullYear(),
+    month: currentDate.getMonth(),
+  });
+  // State for storing the list of activities fetched from the backend
+  const [activities, setActivities] = useState([]);
+  // State to track if the fetched activity list is empty
+  const [isEmpty, setIsEmpty] = useState(true);
+
+  // Gets the full name of the month for the currently selected date
+  const monthName = months[selectedDate.month];
+
+  // Effect hook to fetch activities when the component mounts or the selected date changes
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      props.handleAuthenticated(true);
-      getActivites();
+      handleAuthenticated(true);
+      fetchActivities();
     }
-  }, [selectedDate, list]);
-  /**
-   * making a request to the endpoint getdays with formdata such as start day and end day of the selected month 
-   * to match with the endpoint's  required date format of YYYY-MM-DD a leading zero is added before the month number if its the 9th or lower month
-   * a beareer token is also sent in the authorsiztion header for authentcaiton 
-   * if the data is reutned the state of list is updated which later pass down to the monthlyactivity component 
-   */
-  const getActivites = () => {
-    const formData = new FormData();
+  }, [selectedDate]); // Dependency array includes only selectedDate to limit effect execution
 
-
-    if (selectedDate.month >= 9) {
-      formData.append(
-        "start",
-        selectedDate.year + "-" + (selectedDate.month + 1) + "-" + "01"
-      );
-      formData.append(
-        "end",
-        selectedDate.year + "-" + (selectedDate.month + 1) + "-" + "31"
-      );
-    }
-    if (selectedDate.month < 9) {
-      formData.append(
-        "start",
-        selectedDate.year + "-" + "0" + (selectedDate.month + 1) + "-" + "01"
-      );
-      formData.append(
-        "end",
-        selectedDate.year + "-" + "0" + (selectedDate.month + 1) + "-" + "31"
-      );
-    }
-    const token = localStorage.getItem("token");
-    fetch(`${API_BASE_URL}getdays`, {
-      method: "POST",
-      headers: new Headers({ Authorization: "Bearer " + token }),
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        if (json.data.length > 0) {
-          setList(json.data);
-        } else setList(empty);
-      })
-      .catch((e) => {
-        console.log(e.message);
-      });
+  // Function to change the month. `delta` is either 1 or -1 to move to the next or previous month.
+  const changeMonth = (delta) => {
+    setSearchTerm("");
+    setSelectValue("");
+    const newMonth = selectedDate.month + delta;
+    const newYear = selectedDate.year + (newMonth > 11 ? 1 : newMonth < 0 ? -1 : 0);
+    setSelectedDate({
+      month: (newMonth + 12) % 12, // Ensures the month wraps correctly from December to January and vice versa
+      year: newYear
+    });
   };
 
-  const sxGrid = {
-    padding: 4,
-  };
+  // Function to fetch activities based on the selected date
+const fetchActivities = () => {
+  const monthIndex = selectedDate.month + 1;
+  const paddedMonth = monthIndex < 10 ? `0${monthIndex}` : monthIndex; // Ensuring two-digit month format
+  const formData = new FormData();
+  formData.append("start", `${selectedDate.year}-${paddedMonth}-01`); // Start of the month
+  formData.append("end", `${selectedDate.year}-${paddedMonth}-31`); // End of the month
+
+  const token = localStorage.getItem("token");
+  fetch(`${API_BASE_URL}getdays`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Check if data.data exists and has any length; if not, set empty to true
+    console.log(data)
+    const activities = data.data ?? [];
+    setIsEmpty(activities.length === 0);
+    setActivities(activities);
+  })
+  .catch(error => console.error('Fetch activities failed:', error));
+};
+
+  // Render part of the component
   return (
     <div>
-      {props.authenticated && (
-        <Grid sx={sxGrid}>
-          <Button
-            variant="contained"
-            color="secondary"
-            sx={{ margin: 1 }}
-            onClick={changePrevious}
-          >
-            previous Month
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            sx={{ margin:1 }}
-            onClick={changeNext}
-          >
-            Next Month
-          </Button>
-          <h1>
-            {monthN} {selectedDate.year} Activity List
-          </h1>
-          {list === empty ? (
-            <Typography>No activity found for the selected Month</Typography>
+      {authenticated ? (
+        <Grid sx={{ padding: 4 }}>
+          <Button variant="contained" color="secondary" sx={{ margin: 1 }} onClick={() => changeMonth(-1)}>Previous Month</Button>
+          <Button variant="contained" color="secondary" sx={{ margin: 1 }} onClick={() => changeMonth(1)}>Next Month</Button>
+          <Typography variant="h4">{monthName} {selectedDate.year} Activity List</Typography>
+          {isEmpty ? (
+            <Typography>No activity found for the selected month.</Typography>
           ) : (
-            <MonthlyActivity
-              list={list}
-              searchterm={searchterm}
-              setSearchTerm={setSearchTerm}
-              selectValue={selectValue}
-              setSelectValue={setSelectValue}
-            />
+            <MonthlyActivity list={activities} searchTerm={searchTerm} setSearchTerm={setSearchTerm} selectValue={selectValue} setSelectValue={setSelectValue} />
           )}
         </Grid>
-      )}
-      {!props.authenticated && (
+      ) : (
         <Grid>
-          <Link href="#/signin">
-            <h2>Please Sign in to use this functionality</h2>
-          </Link>
+          <Typography variant="h6" sx={{ textAlign: 'center' }}>
+            Please <a href="#/signin">Sign in</a> to use this functionality.
+          </Typography>
         </Grid>
       )}
     </div>
   );
 };
 
-export default Calander;
+export default AllActivity;

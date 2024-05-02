@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardMedia,
-  Container,
-  Grid,
-  Link,
-  Typography,
-} from "@mui/material";
+import {Box,Button,Card,CardMedia,Container,Grid,Link,Typography,} from "@mui/material";
 import React, { useState, useEffect } from "react";
 import ActivitiesExplained from "./ActivitiesExplained";
 import NordWood from "./img/NordWood.avif";
@@ -64,8 +55,6 @@ const Homepage = () => {
           </Typography>
         </Box>
       </Card>
-      <Typography variant="h2" gutterBottom></Typography>
-
       <Container maxWidth="lg" width="100%">
         <Grid container direction="column">
           <Grid item>
@@ -79,7 +68,6 @@ const Homepage = () => {
               How to use this application
             </Typography>
             <Button
-              
               onClick={() => setFirstStep(true)}
               variant="contained"
               color="secondary"

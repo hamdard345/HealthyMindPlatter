@@ -24,7 +24,7 @@ import Search from "./Search";
  * @param {selectValue,setSelectValue}  prop for select value and its setter function
  * @returns a table which holds a list of all activities along with other functionalities such a serch and filter
  */
-export const MonthlyActivity = (props) => {
+const MonthlyActivity = (props) => {
   //hook for pages
   const [page, setPage] = useState(0);
   //hook for rows
@@ -85,7 +85,7 @@ export const MonthlyActivity = (props) => {
       value.activityName.toLowerCase() +
       value.time +
       value.activityNotes.toLowerCase();
-    return activityData.includes(props.searchterm.toLowerCase());
+    return activityData.includes(props.searchTerm.toLowerCase());
   };
   const handleSearch = (term) => {
     props.setSearchTerm(term);
@@ -100,7 +100,7 @@ export const MonthlyActivity = (props) => {
   };
   return (
     <>
-      <Box container display="flex" gap="20px" sx={{ paddingBottom: 2 }}>
+      <Box container ={true.toString()} display="flex" gap="20px" sx={{ paddingBottom: 2 }}>
         <Search searchterm={props.searchterm} handler={handleSearch} />
         <InputLabel id="tagSelectLabel" sx={{ paddingTop: 0.7 }}>
           Filter by Activity Category
@@ -166,3 +166,4 @@ export const MonthlyActivity = (props) => {
     </>
   );
 };
+export default MonthlyActivity;
