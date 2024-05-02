@@ -8,8 +8,27 @@ Welcome to the GitHub repository for HealthyMindPlatter, a web-based application
 - CSS
 - HTML
 
-## Installation
+# Installation
 To set up HealthyMindPlatter locally:
 1. Clone the repo: `git clone https://github.com/hamdard345/HealthyMindPlatter.git`
 2. Install dependencies: `npm install` (assuming Node.js is used)
 3. Start the server: `npm start` (or the equivalent command)
+
+# Configuration Instructions
+
+## Setting Up the API Base URL
+
+To configure the base URL for API requests in the application:
+
+    Open the config.js file located in app/src/.
+    Find the line const API_BASE_URL = 'http://localhost/projecthmp/healthymindplatter/api/';.
+    Replace 'http://localhost/projecthmp/healthymindplatter/api/' with the base URL that matches your deployment environment.
+
+
+## Updating the PHP Request Path
+
+To ensure the server-side script matches your directory structure:
+
+    Navigate to the request.php file located in api/src/.
+    Modify the path or any other configurations to align with your server setup.
+    Save your changes.
