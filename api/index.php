@@ -3,6 +3,8 @@
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *");
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Headers: Content-Type, authorization');
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {    
     exit(0);
 }
@@ -33,15 +35,19 @@ $request = new Request();
                 $endpoint = new Update();
                 break; 
             case '/adduser/':
+            case '/adduser':
                 $endpoint = new AddUser();
                 break;
             case '/addactivity/':
+            case '/addactivity':
                 $endpoint = new AddActivity();
                 break;
             case '/getdays/':
+            case '/getdays':
                 $endpoint = new Getdays();
                 break;
             case '/weeklyreport/':
+            case '/weeklyreport':
                 $endpoint = new Weeklyreport();
                 break;
             case '/updateactivity/':

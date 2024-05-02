@@ -3,18 +3,30 @@ import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Button, Grid,  MenuItem, Link, Autocomplete } from "@mui/material";
+import { Button, Grid, MenuItem, Link, Autocomplete } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import backgroundImage from "./img/dana-devolk-x2cNcfz_xXU-unsplash.jpg"
+import backgroundImage from "./img/dana-devolk-x2cNcfz_xXU-unsplash.jpg";
+import calculateDuration from "./utills/CalculateDuration";
+import handleSelect from "./utills/handleSelect";
 import API_BASE_URL from "../config";
-
 
 /**
  * @author Noorullah Niamatullah
  * select a date using matierial ui date picker and time using TimePicker
  * @returns track component allows user to add activities
  */
-const Track = (props) => {
+const sxItem = {
+  width: { xl: 450, lg: 400, md: 300, sm: 200, xs: 150 },
+  mb: 1,
+};
+const styles = {
+  GridCContainer: {
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: "cover",
+    marginTop: 0,
+  },
+};
+const Track = props => {
   const [date, setDate] = useState(new Date().toJSON().substring(0, 10));
   const [activity, setActivity] = useState("sleep");
   const [activityName, setActivityName] = useState("");
@@ -26,78 +38,30 @@ const Track = (props) => {
     "Rest",
     "Doze",
   ]);
-  // array for start time
-  let starting = [];
-  // array first positin is the hour
-  starting[0] = startTime.$H;
-  //second positin is the minutes
-  starting[1] = startTime.$m;
-  let ending = [];
-  ending[0] = endTime.$H;
-  ending[1] = endTime.$m;
 
-  let duration = 0;
-  /**
-   * if the activity started before midnight take the differnce till midnight add it to the time after midnight if the activity started after midnight duration is end time minus start
-   */
-  if (ending[0] < starting[0]) {
-    duration =
-      24 * 60 - (starting[0] * 60 + starting[1]) + (ending[0] * 60 + ending[1]);
-  } else {
-    duration = ending[0] * 60 + ending[1] - (starting[0] * 60 + starting[1]);
-  }
-  const handleSelect = (event) => {
-    setActivity(event.target.value);
-    //suggested activity name based on selected activity
-    if (event.target.value === "sleep") {
-      setSuggestedActivityNames(["Nap", "Rest", "Doze"]);
-    } else if (event.target.value === "physical") {
-      setSuggestedActivityNames(["Run", "Swim", "Bike"]);
-    } else if (event.target.value === "focus") {
-      setSuggestedActivityNames([
-        "Working on project",
-        "solving a puzzle",
-        "Reading a book",
-        "learning a new skill",
-      ]);
-    } else if (event.target.value === "play") {
-      setSuggestedActivityNames([
-        "Playing chess",
-        "",
-        "Playing guitar",
-        "Painting",
-      ]);
-    } else if (event.target.value === "timein") {
-      setSuggestedActivityNames([
-        "Journaling",
-        "Meditation",
-        "completing a daily log of routines",
-      ]);
-    } else if (event.target.value === "downtime") {
-      setSuggestedActivityNames([
-        "taking a leisurely walk",
-        "listening to music or a podcasts",
-        "thinking and reflecting",
-        "daydreaming",
-      ]);
-    } else if (event.target.value === "connecting") {
-      setSuggestedActivityNames([
-        "Spending time with family",
-        "Sharing a meal with friends ",
-      ]);
-    } else {
-      setSuggestedActivityNames([]);
+  const duration = calculateDuration(startTime, endTime);
+  const handleStart = start => {
+    let startingTime;
+    if (start) {
+      startingTime = `${start["$H"]}:${start["$m"]}`;
     }
+    return startingTime;
   };
+  let starting = handleStart(startTime);
+  // Bind the handleSelect function with necessary setters
+  const boundHandleSelect = handleSelect(
+    setActivity,
+    setSuggestedActivityNames
+  );
   const handleActivityName = (event, value) => {
     setActivityName(value);
   };
-  const handleDetails = (event) => {
+  const handleDetails = event => {
     setDetails(event.target.value);
   };
   // define a function to clear the fields
   const clearFields = () => {
-    console.log('clearFields called');
+    console.log("clearFields called");
     setDate(new Date().toJSON().substring(0, 10));
     setActivity("");
     setActivityName("");
@@ -110,15 +74,15 @@ const Track = (props) => {
     if (localStorage.getItem("token")) {
       props.handleAuthenticated(true);
     }
-    
   }, []);
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault();
     console.log("s", duration);
     if (!duration) {
       alert("Please fill out all required fields");
       return;
-    }if(!activity){
+    }
+    if (!activity) {
       alert("Please select an activity category");
       return;
     }
@@ -129,39 +93,27 @@ const Track = (props) => {
     formData.append("time", starting);
     formData.append("duration", duration);
     formData.append("activityNotes", details);
-    console.log("formdata",formData)
+    console.log("formdata", formData);
     const token = localStorage.getItem("token");
-    fetch(`${API_BASE_URL}addactivity`, {
+    fetch(`${API_BASE_URL}addactivity/`, {
       method: "POST",
       headers: new Headers({ Authorization: "Bearer " + token }),
       body: formData,
     })
-      .then((response) => response.json())
-      .then((json) => {
+      .then(response => response.json())
+      .then(json => {
         if (json.message === "Success") {
           console.log(json);
-          console.log("form data",formData)
           clearFields();
           alert("You have added an activity");
-          window.location.hash = "#/allactivity"
+          window.location.hash = "#/allactivity";
         } else {
           alert("something went wrong try again");
         }
       })
-      .catch((e) => {
+      .catch(e => {
         console.log(e.message);
       });
-  };
-  const sxItem = {
-    width: { xl: 450, lg: 400, md: 300, sm: 200, xs: 150 },
-    mb: 1,
-  };
-  const styles = {
-    GridCContainer: {
-      backgroundImage: `url(${backgroundImage})`,
-      backgroundSize: "cover",
-      marginTop: 0,
-    },
   };
 
   return (
@@ -183,10 +135,10 @@ const Track = (props) => {
               <DatePicker
                 label="Select a date"
                 value={date}
-                onChange={(newValue) => {
+                onChange={newValue => {
                   setDate(newValue.toJSON().substring(0, 10));
                 }}
-                renderInput={(params) => (
+                renderInput={params => (
                   <TextField
                     {...params}
                     inputProps={{ ...params.inputProps, readOnly: true }}
@@ -199,7 +151,7 @@ const Track = (props) => {
               <TextField
                 label="select activity category"
                 value={activity}
-                onChange={handleSelect}
+                onChange={boundHandleSelect}
                 select
                 sx={{ width: { xl: 450, lg: 400, md: 300, sm: 200, xs: 150 } }}
               >
@@ -218,7 +170,7 @@ const Track = (props) => {
                 sx={sxItem}
                 margin="normal"
                 options={suggestedActivityNames}
-                renderInput={(params) => (
+                renderInput={params => (
                   <TextField
                     {...params}
                     label="Activity Name"
@@ -226,7 +178,7 @@ const Track = (props) => {
                   />
                 )}
                 onChange={handleActivityName}
-                onBlur={(event) => setActivityName(event.target.value)}
+                onBlur={event => setActivityName(event.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -234,10 +186,10 @@ const Track = (props) => {
                 label="Start time"
                 value={startTime}
                 ampm={false}
-                onChange={(newStart) => {
+                onChange={newStart => {
                   setStart(newStart);
                 }}
-                renderInput={(params) => (
+                renderInput={params => (
                   <TextField
                     {...params}
                     inputProps={{ ...params.inputProps, readOnly: true }}
@@ -252,10 +204,10 @@ const Track = (props) => {
                 label="end time"
                 value={endTime}
                 ampm={false}
-                onChange={(newEnd) => {
+                onChange={newEnd => {
                   setEnd(newEnd);
                 }}
-                renderInput={(params) => (
+                renderInput={params => (
                   <TextField
                     {...params}
                     inputProps={{ ...params.inputProps, readOnly: true }}
@@ -292,7 +244,7 @@ const Track = (props) => {
       {!props.authenticated && (
         <Grid>
           <Link href="#/signin">
-          <h2>Please Sign in to use this functionality</h2>
+            <h2>Please Sign in to use this functionality</h2>
           </Link>
         </Grid>
       )}

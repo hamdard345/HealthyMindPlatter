@@ -37,7 +37,7 @@ const ActivitiesExplained = () => {
 
       <Grid container spacing={2} >
 
-        <Grid container
+        <Grid item container
           xs={12} md={3}
           order={{ xs: 2, md: 1 }}
           direction={{ xs: 'row', md: 'column' }}

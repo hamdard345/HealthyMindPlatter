@@ -74,12 +74,12 @@ const Homepage = () => {
           </Grid>
 
           <Grid item align="center" justifyContent="center">
-            <h3 gutterBottom align="center">
+            <Typography variant="h4" gutterBottom align="center">
               {" "}
               How to use this application
-            </h3>
+            </Typography>
             <Button
-              gutterBottom
+              
               onClick={() => setFirstStep(true)}
               variant="contained"
               color="secondary"
